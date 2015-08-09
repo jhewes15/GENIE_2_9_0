@@ -30,6 +30,7 @@ BUILD_TARGETS =    print-make-info \
 		   flux-drivers \
 		   geom-drivers \
 		   nucleon-decay \
+		   neutron-osc \
 		   reweight \
 		   mueloss \
 		   vld-tools \
@@ -40,6 +41,7 @@ BUILD_TARGETS =    print-make-info \
 		   fnal-support-softw \
 		   atmo-support-softw \
 		   nucleon-decay-support-softw \
+		   neutron-osc-support-softw \
 		   reweight-support-softw \
 		   masterclass-support-softw \
 		   install-scripts
@@ -89,13 +91,26 @@ nucleon-decay:
 	@echo " "
 	@echo "** Building nucleon decay library..."
 ifeq ($(strip $(GOPT_ENABLE_NUCLEON_DECAY)),YES)
-	cd ${GENIE}/src;\
+	cd ${GENIE}/src; \
 	cd NucleonDecay; \
 	make; \
 	cd ${GENIE}
 else
 	@echo " "
 	@echo "** Nucleon decay was not enabled. Skipping..."
+endif
+
+neutron-osc:
+	@echo " "
+	@echo "** Building neutron oscillation libary..."
+ifeq ($(strip $(GOPT_ENABLE_NEUTRON_OSC)),YES)
+	cd ${GENIE}/src; \
+        cd NeutronOsc; \
+        make; \
+        cd ${GENIE}
+else
+	@echo " "
+	@echo "** Neutron oscillation was not enabled. Skipping..."
 endif
 
 reweight:
@@ -312,11 +327,22 @@ nucleon-decay-support-softw: FORCE
 	@echo " "
 	@echo "** Building nucleon decay applications ..."
 ifeq ($(strip $(GOPT_ENABLE_NUCLEON_DECAY)),YES)
-	cd ${GENIE}/src/support/ndcy/EvGen;\
+	cd ${GENIE}/src/support/ndcy/EvGen; \
 	make all; \
 	cd ${GENIE}
 else
 	@echo "Nucleon decay not enabled! Skipping..."
+endif
+
+neutron-osc-support-softw: FORCE
+	@echo " "
+	@echo "** Building neutron oscillation applications ..."
+ifeq ($(strip $(GOPT_ENABLE_NEUTRON_OSC)),YES)
+	cd ${GENIE}/src/support/nosc/EvGen; \
+	make all; \
+	cd ${GENIE}
+else
+	@echo "Neutron oscillation not enabled! Skipping..."
 endif
 
 reweight-support-softw: FORCE
@@ -422,6 +448,7 @@ make-install-dirs: FORCE
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/NuGamma
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/Nuclear
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/NucleonDecay
+	mkdir ${GENIE_INC_INSTALLATION_PATH}/NeutronOsc
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/Numerical
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/PDF
 	mkdir ${GENIE_INC_INSTALLATION_PATH}/PDG
@@ -470,6 +497,7 @@ copy-install-files: FORCE
 	cd MuELoss;                make install; cd ..; \
 	cd Nuclear;                make install; cd ..; \
 	cd NucleonDecay;           make install; cd ..; \
+	cd NeutronOsc;             make install; cd ..; \
 	cd Ntuple;                 make install; cd ..; \
 	cd NuE;                    make install; cd ..; \
 	cd NuGamma;                make install; cd ..; \
@@ -520,6 +548,7 @@ purge: FORCE
 	cd MuELoss;                       make purge; cd ..; \
 	cd Nuclear;                       make purge; cd ..; \
 	cd NucleonDecay;                  make purge; cd ..; \
+	cd NeutronOsc;                    make purge; cd ..; \
 	cd Ntuple;                        make purge; cd ..; \
 	cd NuGamma;                       make purge; cd ..; \
 	cd NuE;                           make purge; cd ..; \
@@ -579,6 +608,7 @@ clean-files: FORCE
 	cd MuELoss;                       make clean; cd ..; \
 	cd Nuclear;                       make clean; cd ..; \
 	cd NucleonDecay;                  make clean; cd ..; \
+	cd NeutronOsc;                    make clean; cd ..; \
 	cd Ntuple;                        make clean; cd ..; \
 	cd NuGamma;                       make clean; cd ..; \
 	cd NuE;                           make clean; cd ..; \
@@ -608,6 +638,7 @@ clean-files: FORCE
 	cd support/atmo/EvGen/;           make clean; cd ../../../; \
 	cd support/atmo/UpMuFluxGen/;     make clean; cd ../../../; \
 	cd support/ndcy/EvGen/;           make clean; cd ../../../; \
+	cd support/nosc/EvGen/;           make clean; cd ../../../; \
 	cd support/rwght/;                make clean; cd ../../; \
 	cd support/masterclass/;          make clean; cd ../../; \
 	cd test;                          make clean; cd ..; \
@@ -660,6 +691,7 @@ distclean: FORCE
 	cd MuELoss;                        make distclean; cd ..; \
 	cd Nuclear;                        make distclean; cd ..; \
 	cd NucleonDecay;                   make distclean; cd ..; \
+	cd NeutronOsc;                     make distclean; cd ..; \
 	cd Ntuple;                         make distclean; cd ..; \
 	cd NuGamma;                        make distclean; cd ..; \
 	cd NuE;                            make distclean; cd ..; \
@@ -689,6 +721,7 @@ distclean: FORCE
 	cd support/atmo/EvGen/;            make distclean; cd ../../../; \
 	cd support/atmo/UpMuFluxGen/;      make distclean; cd ../../../; \
 	cd support/ndcy/EvGen/;            make distclean; cd ../../../; \
+        cd support/nosc/EvGen/;            make distclean; cd ../../../; \
 	cd support/rwght/;                 make distclean; cd ../../; \
 	cd support/masterclass/;           make distclean; cd ../../; \
 	cd test;                           make distclean; cd ..; \

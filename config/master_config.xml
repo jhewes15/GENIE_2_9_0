@@ -45,6 +45,7 @@
    <config alg="genie::MECGenerator">                MECGenerator.xml                </config>
    <config alg="genie::GLRESGenerator">              GLRESGenerator.xml              </config>
    <config alg="genie::NucleonDecayPrimaryVtxGenerator"> NucleonDecayPrimaryVtxGenerator.xml </config>
+   <config alg="genie::NeutronOscPrimaryVtxGenerator"> NeutronOscPrimaryVtxGenerator.xml </config>
 
    <!-- ****** CONFIGURATION FOR LIST-GENERATORS ****** -->
    <config alg="genie::QELInteractionListGenerator">           QELInteractionListGenerator.xml       </config>
@@ -59,6 +60,7 @@
    <config alg="genie::DFRInteractionListGenerator">           DFRInteractionListGenerator.xml       </config>
    <config alg="genie::SKInteractionListGenerator">            SKInteractionListGenerator.xml        </config>    
    <config alg="genie::DummyInteractionListGenerator">         Default.xml                           </config>
+   <config alg="genie::NOscDummyInteractionListGenerator">     Default.xml                           </config>
    <config alg="genie::InteractionListAssembler">              InteractionListAssembler.xml          </config>
    <config alg="genie::EventGeneratorListAssembler">           EventGeneratorListAssembler.xml       </config>
 
@@ -84,6 +86,11 @@
    <config alg="genie::PythiaDecayer">               PythiaDecayer.xml               </config>
    <config alg="genie::BaryonResonanceDecayer">      BaryonResonanceDecayer.xml      </config>
 
+   <!-- ****** CONFIGURATION FOR (LIKELY OBSOLETE) INTEGRATORS ****** -->
+   <config alg="genie::Simpson1D">                   Simpson1D.xml                   </config>
+   <config alg="genie::Simpson2D">                   Simpson2D.xml                   </config>
+   <config alg="genie::Simpson2DFixN">               Simpson2DFixN.xml               </config>
+   
    <!--  ****** CONFIGURATION FORM FACTOR and STRUCTURE FUNCTION ALGORITHMS ****** -->
    <config alg="genie::DipoleELFormFactorsModel">    DipoleELFormFactorsModel.xml    </config>
    <config alg="genie::BBA03ELFormFactorsModel">     BBA03ELFormFactorsModel.xml     </config>
@@ -103,6 +110,7 @@
    <config alg="genie::QELXSec">                     QELXSec.xml                     </config>
    <config alg="genie::DISXSec">                     DISXSec.xml                     </config>
    <config alg="genie::COHXSec">                     COHXSec.xml                     </config>
+   <config alg="genie::COHXSecAR">                   COHXSecAR.xml                   </config>
    <config alg="genie::AlamSimoAtharVacasSKXSec">    AlamSimoAtharVacasSKXSec.xml    </config>   
    <config alg="genie::IMDXSec">                     IMDXSec.xml                     </config>
    <config alg="genie::RESXSec">                     RESXSec.xml                     </config>
@@ -110,6 +118,9 @@
 
    <!--  ****** CONFIGURATION FOR XSEC ALGORITHMS ****** -->
    <config alg="genie::AhrensNCELPXSec">               AhrensNCELPXSec.xml               </config>
+   <config alg="genie::AlvarezRusoCOHPiPXSec">         AlvarezRusoCOHPiPXSec.xml         </config> 
+   <config alg="genie::BergerSehgalCOHPiPXSec2015">    BergerSehgalCOHPiPXSec2015.xml    </config> 
+   <config alg="genie::BergerSehgalFMCOHPiPXSec2015">  BergerSehgalFMCOHPiPXSec2015.xml  </config> 
    <config alg="genie::LwlynSmithQELCCPXSec">          LwlynSmithQELCCPXSec.xml          </config>
    <config alg="genie::QPMDISPXSec">                   QPMDISPXSec.xml                   </config>
    <config alg="genie::AivazisCharmPXSecLO">           AivazisCharmPXSecLO.xml           </config>
@@ -134,6 +145,7 @@
    <config alg="genie::RosenbluthPXSec">               RosenbluthPXSec.xml               </config>
    <config alg="genie::StrumiaVissaniIBDPXSec">        StrumiaVissaniIBDPXSec.xml        </config>
    <config alg="genie::DummyPXSec">                    Default.xml                       </config>
+   <config alg="genie::NOscDummyPXSec">                Default.xml                       </config>
 
    <!--  ****** CONFIGURATION FOR NUCLEAR ENV. ALGORITHMS ****** -->
    <config alg="genie::NuclearModelMap">             NuclearModelMap.xml             </config>

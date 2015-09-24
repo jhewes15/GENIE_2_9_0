@@ -282,8 +282,10 @@ const EventRecordVisitorI * NucleonDecayGenerator(void)
   string sname   = "genie::EventGenerator";
   string sconfig = "NucleonDecay";
   AlgFactory * algf = AlgFactory::Instance();
+  std::cout << "ABOUT TO TRY DYNAMIC CAST" << std::endl;
   const EventRecordVisitorI * mcgen =
      dynamic_cast<const EventRecordVisitorI *> (algf->GetAlgorithm(sname,sconfig));
+  std::cout << "SUCCESSFULLY DID THE DYNAMIC CAST" << std::endl;
   if(!mcgen) {
      LOG("gevgen_ndcy", pFATAL) << "Couldn't instantiate the nucleon decay generator";
      gAbortingInErr = true;

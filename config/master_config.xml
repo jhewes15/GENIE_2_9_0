@@ -85,11 +85,6 @@
    <!-- ****** CONFIGURATION FOR PARTICLE DECAY ALGORITHMS****** -->
    <config alg="genie::PythiaDecayer">               PythiaDecayer.xml               </config>
    <config alg="genie::BaryonResonanceDecayer">      BaryonResonanceDecayer.xml      </config>
-
-   <!-- ****** CONFIGURATION FOR (LIKELY OBSOLETE) INTEGRATORS ****** -->
-   <config alg="genie::Simpson1D">                   Simpson1D.xml                   </config>
-   <config alg="genie::Simpson2D">                   Simpson2D.xml                   </config>
-   <config alg="genie::Simpson2DFixN">               Simpson2DFixN.xml               </config>
    
    <!--  ****** CONFIGURATION FORM FACTOR and STRUCTURE FUNCTION ALGORITHMS ****** -->
    <config alg="genie::DipoleELFormFactorsModel">    DipoleELFormFactorsModel.xml    </config>
@@ -110,7 +105,6 @@
    <config alg="genie::QELXSec">                     QELXSec.xml                     </config>
    <config alg="genie::DISXSec">                     DISXSec.xml                     </config>
    <config alg="genie::COHXSec">                     COHXSec.xml                     </config>
-   <config alg="genie::COHXSecAR">                   COHXSecAR.xml                   </config>
    <config alg="genie::AlamSimoAtharVacasSKXSec">    AlamSimoAtharVacasSKXSec.xml    </config>   
    <config alg="genie::IMDXSec">                     IMDXSec.xml                     </config>
    <config alg="genie::RESXSec">                     RESXSec.xml                     </config>
@@ -118,9 +112,6 @@
 
    <!--  ****** CONFIGURATION FOR XSEC ALGORITHMS ****** -->
    <config alg="genie::AhrensNCELPXSec">               AhrensNCELPXSec.xml               </config>
-   <config alg="genie::AlvarezRusoCOHPiPXSec">         AlvarezRusoCOHPiPXSec.xml         </config> 
-   <config alg="genie::BergerSehgalCOHPiPXSec2015">    BergerSehgalCOHPiPXSec2015.xml    </config> 
-   <config alg="genie::BergerSehgalFMCOHPiPXSec2015">  BergerSehgalFMCOHPiPXSec2015.xml  </config> 
    <config alg="genie::LwlynSmithQELCCPXSec">          LwlynSmithQELCCPXSec.xml          </config>
    <config alg="genie::QPMDISPXSec">                   QPMDISPXSec.xml                   </config>
    <config alg="genie::AivazisCharmPXSecLO">           AivazisCharmPXSecLO.xml           </config>

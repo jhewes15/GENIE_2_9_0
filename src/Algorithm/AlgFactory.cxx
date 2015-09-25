@@ -133,6 +133,7 @@ const Algorithm * AlgFactory::GetAlgorithm(string name, string config)
        std::cout << "FIFTH BASE (fatal error)" << std::endl;
         exit(1);
      }
+    std::cout << "SIXTH BASE (returning alg_base)" << std::endl;
      return alg_base;
   }
   std::cout << "FOURTH BASE (failed???)" << std::endl;

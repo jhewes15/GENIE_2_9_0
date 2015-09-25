@@ -114,22 +114,28 @@ const Algorithm * AlgFactory::GetAlgorithm(string name, string config)
   
   if(found) {
      LOG("AlgFactory", pDEBUG) << key << " algorithm found in memory";
+    std::cout << "FOURTH BASE (found)" << std::endl;
      return alg_iter->second;
   } else {
      //-- instantiate the factory
      Algorithm * alg_base = this->InstantiateAlgorithm(name,config);
+    
+    std::cout << "FOURTH BASE (not found)" << std::endl;
 
      //-- cache the algorithm for future use
      if(alg_base) {
         pair<string, Algorithm *> key_alg_pair(key, alg_base);
         fAlgPool.insert(key_alg_pair);
+       std::cout << "FIFTH BASE (added)" << std::endl;
      } else {
         LOG("AlgFactory", pFATAL)
             << "Algorithm: " << key << " could not be instantiated";
+       std::cout << "FIFTH BASE (fatal error)" << std::endl;
         exit(1);
      }
      return alg_base;
   }
+  std::cout << "FOURTH BASE (failed???)" << std::endl;
   return 0;
 }
 //____________________________________________________________________________

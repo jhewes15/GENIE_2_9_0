@@ -336,9 +336,9 @@ void NeutronOscPrimaryVtxGenerator::GenerateDecayProducts(
   // if not energetically allowed, keep throwing until it is!
   int j = 1;
 
-  TFile * f = new TFile("/home/jeremy/neutrino/sandpit/nuclear_model.root", "update");
-  TH1 * momentum  = (TH1*) f->Get("momentum");
-  TH1 * is_enough = (TH1*) f->Get("is_enough");
+  //TFile * f = new TFile("/home/jeremy/neutrino/sandpit/nuclear_model.root", "update");
+  //TH1 * momentum  = (TH1*) f->Get("momentum");
+  //TH1 * is_enough = (TH1*) f->Get("is_enough");
 
   while(!permitted) {
     std::cout << "Not enough energy available! Trying again - attempt " << j << std::endl;
@@ -375,15 +375,15 @@ void NeutronOscPrimaryVtxGenerator::GenerateDecayProducts(
     // Set the decay
     permitted = fPhaseSpaceGenerator.SetDecay(*p4d, pdgv.size(), mass);
 
-    double total_e = p4d->E();
-    momentum->Fill(total_e);
+    //double total_e = p4d->E();
+    //momentum->Fill(total_e);
 
-    bool flip = (total_e > 1.984);
-    is_enough->Fill(flip);
+    //bool flip = (total_e > 1.984);
+    //is_enough->Fill(flip);
   }
 
-  f->Write();
-  f->Close();
+  //f->Write();
+  //f->Close();
 
   if(!permitted) {
      LOG("NeutronOsc", pERROR) 

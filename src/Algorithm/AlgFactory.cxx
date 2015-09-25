@@ -96,13 +96,22 @@ const Algorithm * AlgFactory::GetAlgorithm(const AlgId & algid)
 const Algorithm * AlgFactory::GetAlgorithm(string name, string config)
 {
   string key = name + "/" + config;
+  
+  std::cout << "Trying for algorithm with name " << name << " and config " << config << std::endl;
 
   SLOG("AlgFactory", pDEBUG)
       << "Algorithm: " << key << " requested from AlgFactory";
+  
+  std::cout << "FIRST BASE" << std::endl;
 
   map<string, Algorithm *>::const_iterator alg_iter = fAlgPool.find(key);
+  
+  std::cout << "SECOND BASE" << std::endl;
+  
   bool found = (alg_iter != fAlgPool.end());
 
+  std::cout << "THIRD BASE" << std::endl;
+  
   if(found) {
      LOG("AlgFactory", pDEBUG) << key << " algorithm found in memory";
      return alg_iter->second;

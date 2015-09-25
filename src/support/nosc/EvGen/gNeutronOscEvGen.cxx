@@ -332,10 +332,8 @@ const EventRecordVisitorI * NeutronOscGenerator(void)
   string sname   = "genie::EventGenerator";
   string sconfig = "NeutronOsc";
   AlgFactory * algf = AlgFactory::Instance();
-  std::cout << "ABOUT TO TRY DYNAMIC CAST" << std::endl;
   const EventRecordVisitorI * mcgen =
      dynamic_cast<const EventRecordVisitorI *> (algf->GetAlgorithm(sname,sconfig));
-  std::cout << "SUCCESSFULLY DID THE DYNAMIC CAST" << std::endl;
   if(!mcgen) {
      LOG("gevgen_nosc", pFATAL) << "Couldn't instantiate the neutron oscillation generator";
      gAbortingInErr = true;

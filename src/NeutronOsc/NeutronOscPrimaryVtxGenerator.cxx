@@ -25,6 +25,7 @@
 #include "Nuclear/NuclearModelI.h"
 #include "Numerical/RandomGen.h"
 #include "EVGCore/EVGThreadException.h"
+#include "EVGCore/EventRecord.h"
 #include "GHEP/GHepRecord.h"
 #include "GHEP/GHepParticle.h"
 #include "PDG/PDGCodes.h"
@@ -333,58 +334,69 @@ void NeutronOscPrimaryVtxGenerator::GenerateDecayProducts(
   // Set the decay
   bool permitted = fPhaseSpaceGenerator.SetDecay(*p4d, pdgv.size(), mass);
 
-  // if not energetically allowed, keep throwing until it is!
-  int j = 1;
-
-  //TFile * f = new TFile("/home/jeremy/neutrino/sandpit/nuclear_model.root", "update");
-  //TH1 * momentum  = (TH1*) f->Get("momentum");
-  //TH1 * is_enough = (TH1*) f->Get("is_enough");
-
+  // If the decay is not energetically allowed, select a new final state
   while(!permitted) {
-    std::cout << "Not enough energy available! Trying again - attempt " << j << std::endl;
-    j++;
-    // use nuclear model to generate fermi momentum
-    fNuclModel->GenerateNucleon(tgt);
-    TVector3 p3 = fNuclModel->Momentum3();
-    double w = fNuclModel->RemovalEnergy();
-    // use mass & momentum to figure out energy
-    double m = annihilation_nucleon->Mass();
-    double energy = sqrt(pow(m,2) + p3.Mag2()) - w;
-    // give new energy & momentum to particle
-    TLorentzVector p4_1 = TLorentzVector(p3, energy);
-    oscillating_neutron->SetMomentum(p4_1);
 
-    // use nuclear model to generate fermi momentum
-    fNuclModel->GenerateNucleon(tgt);
-    p3 = fNuclModel->Momentum3();
-    w = fNuclModel->RemovalEnergy();
-    // use mass & momentum to figure out energy
-    m = annihilation_nucleon->Mass();
-    energy = sqrt(pow(m,2) + p3.Mag2()) - w;
-    // give new energy & momentum to particle
-    TLorentzVector p4_2 = TLorentzVector(p3, energy);
-    annihilation_nucleon->SetMomentum(p4_2);
-
-    TLorentzVector * p4d = new TLorentzVector(p4_1 + p4_2);
-    TVector3 boost = p4d->BoostVector();
-    p4d->Boost(-boost);
-
-    // get decay position
-//    TLorentzVector * v4d = annihilation_nucleon->GetX4();
-
-    // Set the decay
+    LOG("NeutronOsc", pINFO)
+      << "Not enough energy to generate decay products! Selecting a new final state.";
+    
+    int mode;
+    
+    // set branching ratios, taken from bubble chamber data
+    const int n_modes = 16;
+    double br [n_modes] = { 0.00462, 0.03696, 0.04620, 0.10164,
+                            0.16632, 0.07392, 0.03234, 0.01076,
+                            0.00807, 0.03497, 0.05918, 0.15064,
+                            0.03766, 0.12912, 0.05380, 0.05380 };
+    
+    // randomly generate a number between 1 and 0
+    RandomGen * rnd = RandomGen::Instance();
+    rnd->SetSeed(0);
+    double p = rnd->RndNum().Rndm();
+    
+    // loop through all modes, figure out which one our random number corresponds to
+    double threshold = 0;
+    for (int j = 0; j < n_modes; j++) {
+      threshold += br[j];
+      if (p < threshold) {
+        // once we've found our mode, stop looping
+        mode = j + 1;
+        break;
+      }
+    }
+    
+    // create new event record with new final state
+    EventRecord * event = new EventRecord;
+    Interaction * interaction = Interaction::NOsc((int)fCurrInitStatePdg, mode);
+    event->AttachSummary(interaction);
+    
+    fCurrDecayMode = (NeutronOscMode_t) interaction->ExclTag().DecayMode(); 
+    
+    pdgv = genie::utils::neutron_osc::DecayProductList(fCurrDecayMode);
+    LOG("NeutronOsc", pINFO) << "Decay product IDs: " << pdgv;
+    assert ( pdgv.size() > 1);
+    
+    // get the decay particles again
+    LOG("NeutronOsc", pINFO) << "Performing a phase space decay...";
+    i = 0;
+    delete mass;
+    mass = new double[pdgv.size()];
+    sum = 0;
+    for(pdg_iter = pdgv.begin(); pdg_iter != pdgv.end(); ++pdg_iter) {
+      int pdgc = *pdg_iter;
+      double m = PDGLibrary::Instance()->Find(pdgc)->Mass();
+      mass[i++] = m;
+      sum += m;
+    }
+    
+    LOG("NeutronOsc", pINFO)
+      << "Decaying N = " << pdgv.size() << " particles / total mass = " << sum;
+    LOG("NeutronOsc", pINFO)
+      << "Decaying system p4 = " << utils::print::P4AsString(p4d);
+    
     permitted = fPhaseSpaceGenerator.SetDecay(*p4d, pdgv.size(), mass);
-
-    //double total_e = p4d->E();
-    //momentum->Fill(total_e);
-
-    //bool flip = (total_e > 1.984);
-    //is_enough->Fill(flip);
   }
-
-  //f->Write();
-  //f->Close();
-
+  
   if(!permitted) {
      LOG("NeutronOsc", pERROR) 
        << " *** Phase space decay is not permitted \n"
@@ -470,7 +482,7 @@ void NeutronOscPrimaryVtxGenerator::GenerateDecayProducts(
   delete p4d;
   delete v4d;
 }
-//____________________________________________________________________________
+//___________________________________________________________________________
 void NeutronOscPrimaryVtxGenerator::Configure(const Registry & config)
 {
   Algorithm::Configure(config);   

@@ -342,13 +342,37 @@ void NeutronOscPrimaryVtxGenerator::GenerateDecayProducts(
     
     int mode;
     
+    int initial_nucleus_pdg = initial_nucleus->Pdg();
+        
+    std::string nucleus_pdg = std::to_string(initial_nucleus_pdg);
+    if (nucleus_pdg.size() != 10) {
+      LOG("NeutronOsc", pERROR)
+        << "Expecting the nuclear PDG code to be a 10-digit integer, but it is " << nucleus_pdg << ", which is "
+        << nucleus_pdg.size() << " digits long. Drop me an email at jezhewes@gmail.com ; exiting...";
+      exit(1);
+    }
+
+    int n_nucleons = std::stoi(nucleus_pdg.substr(6,3)) - 1;
+    int n_protons  = std::stoi(nucleus_pdg.substr(3,3));
+    double proton_frac  = ((double)n_protons) / ((double) n_nucleons);
+    double neutron_frac = 1 - proton_frac;
+
     // set branching ratios, taken from bubble chamber data
     const int n_modes = 16;
-    double br [n_modes] = { 0.00462, 0.03696, 0.04620, 0.10164,
-                            0.16632, 0.07392, 0.03234, 0.01076,
-                            0.00807, 0.03497, 0.05918, 0.15064,
-                            0.03766, 0.12912, 0.05380, 0.05380 };
-    
+    double br [n_modes] = { 0.010, 0.080, 0.100, 0.220,
+                            0.360, 0.160, 0.070, 0.020,
+                            0.015, 0.065, 0.110, 0.280,
+                            0.070, 0.240, 0.100, 0.100 };
+   
+    for (int i = 0; i < n_modes; i++) {
+      // for first 7 branching ratios, multiply by relative proton density
+      if (i < 7)
+        br[i] *= proton_frac;
+      // for next 9, multiply by relative neutron density
+      else
+        br[i] *= neutron_frac;
+    }
+
     // randomly generate a number between 1 and 0
     RandomGen * rnd = RandomGen::Instance();
     rnd->SetSeed(0);

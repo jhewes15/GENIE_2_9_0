@@ -156,8 +156,8 @@ using namespace genie;
 // function prototypes
 void  GetCommandLineArgs (int argc, char ** argv);
 void  PrintSyntax        (void);
-int   SelectAnnihilationMode (void);
-int   SelectInitState    (int mode);
+int   SelectAnnihilationMode (int pdg_code);
+int   SelectInitState    (void);
 const EventRecordVisitorI * NeutronOscGenerator(void);
 
 //
@@ -214,8 +214,8 @@ int main(int argc, char ** argv)
           << " *** Generating event............ " << ievent;
 
      EventRecord * event = new EventRecord;
-     int decay = SelectAnnihilationMode();
-     int target = SelectInitState(decay);
+     int target = SelectInitState();
+     int decay = SelectAnnihilationMode(target);
      Interaction * interaction = Interaction::NOsc(target,decay);
      event->AttachSummary(interaction);
 
@@ -241,18 +241,41 @@ int main(int argc, char ** argv)
   return 0;
 }
 //_________________________________________________________________________________________
-int SelectAnnihilationMode(void)
+int SelectAnnihilationMode(int pdg_code)
 {
   // if the mode is set to 'random' (the default), pick one at random!
   if (gOptDecayMode == kNORandom) {
     int mode;
 
+    std::string pdg_string = std::to_string(pdg_code);
+    if (pdg_string.size() != 10) {
+      LOG("neutron_osc", pERROR)
+        << "Expecting PDG code to be a 10-digit integer; instead, it's the following: " << pdg_string;
+      gAbortingInErr = true;
+      exit(1);
+    }
+
+    // count number of protons & neutrons
+    int n_nucleons = std::stoi(pdg_string.substr(6,3)) - 1;
+    int n_protons  = std::stoi(pdg_string.substr(3,3));
+
+    // factor proton / neutron ratio into branching ratios
+    double proton_frac  = ((double)n_protons) / ((double)n_nucleons);
+    double neutron_frac = 1 - proton_frac;
+
     // set branching ratios, taken from bubble chamber data
     const int n_modes = 16;
-    double br [n_modes] = { 0.00462, 0.03696, 0.04620, 0.10164,
-                            0.16632, 0.07392, 0.03234, 0.01076,
-                            0.00807, 0.03497, 0.05918, 0.15064,
-                            0.03766, 0.12912, 0.05380, 0.05380 };
+    double br [n_modes] = { 0.010, 0.080, 0.100, 0.220,
+                            0.360, 0.160, 0.070, 0.020,
+                            0.015, 0.065, 0.110, 0.280,
+                            0.070, 0.240, 0.100, 0.100 };
+
+    for (int i = 0; i < n_modes; i++) {
+      if (i < 7)
+        br[i] *= proton_frac;
+      else
+        br[i] *= neutron_frac;
+    }
 
     // randomly generate a number between 1 and 0
     RandomGen * rnd = RandomGen::Instance();
@@ -283,48 +306,18 @@ int SelectAnnihilationMode(void)
   }
 }
 //_________________________________________________________________________________________
-int SelectInitState(int mode)
+int SelectInitState(void)
 {
-  NeutronOscMode_t decay_mode = (NeutronOscMode_t) mode;
-  int dpdg = utils::neutron_osc::AnnihilatingNucleonPdgCode(decay_mode);
-
-  map<int,double> cprob; // cumulative probability 
-  map<int,double>::const_iterator iter;
- 
-  double sum_prob = 0;
-  for(iter = gOptTgtMix.begin(); iter != gOptTgtMix.end(); ++iter) {
-     int pdg_code = iter->first;
-     int A = pdg::IonPdgCodeToA(pdg_code);
-     int Z = pdg::IonPdgCodeToZ(pdg_code);
-
-     int Nnuc = 0;
-     if      (dpdg == kPdgProton ) { Nnuc = Z;   }
-     else if (dpdg == kPdgNeutron) { Nnuc = A-Z; }
-
-     double wgt  = iter->second;
-     double prob = wgt*Nnuc;
-
-     sum_prob += prob;
-     cprob.insert(map<int, double>::value_type(pdg_code, sum_prob));
+  if (gOptTgtMix.size() > 1) {
+    LOG("gevgen_nosc", pERROR)
+      << "Target mix not currently supported. You must specify a single target nucleus!";
+    gAbortingInErr = true;
+    exit(1);
   }
 
-  assert(sum_prob > 0.);
+  int pdg_code = gOptTgtMix.begin()->first;
 
-  RandomGen * rnd = RandomGen::Instance();
-  double r = sum_prob * rnd->RndEvg().Rndm();
-
-  for(iter = cprob.begin(); iter != cprob.end(); ++iter) {
-     int pdg_code = iter->first;
-     double prob  = iter->second;
-     if(r < prob) {
-       LOG("gevgen_nosc", pNOTICE) << "Selected initial state = " << pdg_code;
-       return pdg_code;
-     }
-  }  
-
-  LOG("gevgen_nosc", pFATAL) << "Couldn't select an initial state...";
-  gAbortingInErr = true;
-  exit(1);
+  return pdg_code;
 }
 //_________________________________________________________________________________________
 const EventRecordVisitorI * NeutronOscGenerator(void)

@@ -12,6 +12,9 @@ MAKEFILE = Makefile
 #
 include $(GENIE)/src/make/Make.include
 
+# Require C++11 for NeutronOsc module.
+CXXFLAGS         += -std=c++11
+
 PACKAGE           = NeutronOsc
 DICTIONARY        = _ROOT_DICT_NeutronOsc
 LIBNAME           = libGNeutronOsc

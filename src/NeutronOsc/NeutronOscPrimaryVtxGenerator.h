@@ -22,6 +22,7 @@
 #include <TGenPhaseSpace.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <string>
 
 #include "EVGCore/EventRecordVisitorI.h"
 #include "NeutronOsc/NeutronOscMode.h"

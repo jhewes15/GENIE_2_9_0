@@ -11,6 +11,9 @@ MAKEFILE = Makefile
 #
 include $(GENIE)/src/make/Make.include
 
+# Require C++11 for this event generator
+CXXFLAGS += -std=c++11
+
 GENIE_LIBS  = $(shell $(GENIE)/src/scripts/setup/genie-config --libs)
 LIBRARIES  := $(GENIE_LIBS) $(LIBRARIES) $(CERN_LIBRARIES)
 
